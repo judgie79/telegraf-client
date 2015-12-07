@@ -16,9 +16,9 @@ namespace StatsdClient
     {
         private readonly object _commandCollectionLock = new object();
 
-        private IStopWatchFactory StopwatchFactory { get; set; }
+        private StopwatchFactory StopwatchFactory { get; set; }
         private IStatsdUDP Udp { get; set; }
-        private IRandomGenerator RandomGenerator { get; set; }
+        private SamplerFunc SamplerFunc { get; set; }
 
         private readonly string _prefix;
 
@@ -41,22 +41,22 @@ namespace StatsdClient
                                                                            {typeof (Set), "s"}
                                                                        };
 
-        public Statsd(IStatsdUDP udp, IRandomGenerator randomGenerator, IStopWatchFactory stopwatchFactory, string prefix)
+        public Statsd(IStatsdUDP udp, SamplerFunc samplerFunc, StopwatchFactory stopwatchFactory, string prefix)
         {
             Commands = new List<string>();
             StopwatchFactory = stopwatchFactory;
             Udp = udp;
-            RandomGenerator = randomGenerator;
+            SamplerFunc = samplerFunc;
             _prefix = prefix;
         }
 
-        public Statsd(IStatsdUDP udp, IRandomGenerator randomGenerator, IStopWatchFactory stopwatchFactory)
-            : this(udp, randomGenerator, stopwatchFactory, string.Empty) { }
+        public Statsd(IStatsdUDP udp, SamplerFunc samplerFunc, StopwatchFactory stopwatchFactory)
+            : this(udp, samplerFunc, stopwatchFactory, string.Empty) { }
 
 
 
-		public Statsd(IStatsdUDP udp, IRandomGenerator randomGenerator)
-			: this(udp, randomGenerator, () =>
+		public Statsd(IStatsdUDP udp, SamplerFunc samplerFunc)
+			: this(udp, samplerFunc, () =>
 			{
 				var watch = Stopwatch.StartNew();
 				return (() => (int)watch.ElapsedMilliseconds);
@@ -64,7 +64,7 @@ namespace StatsdClient
 
 
         public Statsd(IStatsdUDP udp, string prefix)
-            : this(udp, new RandomGenerator(), () =>
+            : this(udp, SamplerDefault.ShouldSend, () =>
             {
 	            var watch = Stopwatch.StartNew();
 	            return (() => (int)watch.ElapsedMilliseconds);
@@ -125,7 +125,7 @@ namespace StatsdClient
 
         public void Send<TCommandType>(string name, int value, double sampleRate) where TCommandType : IAllowsInteger, IAllowsSampleRate
         {
-            if (RandomGenerator.ShouldSend(sampleRate))
+            if (SamplerFunc(sampleRate))
             {
                 Commands = new List<string> { GetCommand(name, value.ToString(CultureInfo.InvariantCulture), _commandToUnit[typeof(TCommandType)], sampleRate) };
                 Send();
@@ -134,7 +134,7 @@ namespace StatsdClient
 
         public void Add<TCommandType>(string name, int value, double sampleRate) where TCommandType : IAllowsInteger, IAllowsSampleRate
         {
-            if (RandomGenerator.ShouldSend(sampleRate))
+            if (SamplerFunc(sampleRate))
             {
                 Commands.Add(GetCommand(name, value.ToString(CultureInfo.InvariantCulture), _commandToUnit[typeof(TCommandType)], sampleRate));
             }
@@ -163,13 +163,13 @@ namespace StatsdClient
 
         private string GetCommand(string name, string value, string unit, double sampleRate)
         {
-            var format = sampleRate == 1 ? "{0}:{1}|{2}" : "{0}:{1}|{2}|@{3}";
+            var format = sampleRate.Equals(1) ? "{0}:{1}|{2}" : "{0}:{1}|{2}|@{3}";
             return string.Format(CultureInfo.InvariantCulture, format, _prefix + name, value, unit, sampleRate);
         }
 
         public void Add(Action actionToTime, string statName, double sampleRate=1)
         {
-			if (!RandomGenerator.ShouldSend(sampleRate))
+			if (!SamplerFunc(sampleRate))
 			{
 				actionToTime();
 				return;
@@ -190,7 +190,7 @@ namespace StatsdClient
 
         public void Send(Action actionToTime, string statName, double sampleRate=1)
         {
-			if (!RandomGenerator.ShouldSend(sampleRate))
+			if (!SamplerFunc(sampleRate))
 			{
 				actionToTime();
 				return;

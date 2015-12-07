@@ -105,7 +105,7 @@ namespace StatsdClient
         /// <param name="action">The code to time.</param>
         /// <param name="statName">Name of the metric.</param>
         /// <param name="sampleRate">Sample rate to reduce the load on your metric server. Defaults to 1 (100%).</param>
-        public static void Time(Action action, string statName, double sampleRate = 1)
+        public static void Time(Action action, string statName, int sampleRate = 1)
         {
             _statsD.Send(action, BuildNamespacedStatName(statName), sampleRate);
         }

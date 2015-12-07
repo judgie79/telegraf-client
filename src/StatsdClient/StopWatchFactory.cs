@@ -5,7 +5,7 @@ namespace StatsdClient
 
 
 
-	public delegate int StopAndMeasureElapsedMs();
-	public delegate StopAndMeasureElapsedMs IStopWatchFactory();
+	public delegate int StopwatchMeasurement();
+	public delegate StopwatchMeasurement StopwatchFactory();
 
 }
