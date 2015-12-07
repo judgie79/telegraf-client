@@ -53,8 +53,22 @@ namespace StatsdClient
         public Statsd(IStatsdUDP udp, IRandomGenerator randomGenerator, IStopWatchFactory stopwatchFactory)
             : this(udp, randomGenerator, stopwatchFactory, string.Empty) { }
 
+
+
+		public Statsd(IStatsdUDP udp, IRandomGenerator randomGenerator)
+			: this(udp, randomGenerator, () =>
+			{
+				var watch = Stopwatch.StartNew();
+				return (() => (int)watch.ElapsedMilliseconds);
+			}) { }
+
+
         public Statsd(IStatsdUDP udp, string prefix)
-            : this(udp, new RandomGenerator(), new StopWatchFactory(), prefix) { }
+            : this(udp, new RandomGenerator(), () =>
+            {
+	            var watch = Stopwatch.StartNew();
+	            return (() => (int)watch.ElapsedMilliseconds);
+            }, prefix) { }
 
         public Statsd(IStatsdUDP udp)
             : this(udp, "") { }
@@ -155,39 +169,42 @@ namespace StatsdClient
 
         public void Add(Action actionToTime, string statName, double sampleRate=1)
         {
-            var stopwatch = StopwatchFactory.Get();
+			if (!RandomGenerator.ShouldSend(sampleRate))
+			{
+				actionToTime();
+				return;
+			}
+            var stopwatch = StopwatchFactory();
 
             try
             {
-                stopwatch.Start();
                 actionToTime();
             }
             finally
             {
-                stopwatch.Stop();
-                if (RandomGenerator.ShouldSend(sampleRate))
-                {
-                    Add<Timing>(statName, stopwatch.ElapsedMilliseconds());
-                }
+				
+				Add<Timing>(statName, stopwatch());
+                
             }
         }
 
         public void Send(Action actionToTime, string statName, double sampleRate=1)
         {
-            var stopwatch = StopwatchFactory.Get();
+			if (!RandomGenerator.ShouldSend(sampleRate))
+			{
+				actionToTime();
+				return;
+			}
+            var stopwatch = StopwatchFactory();
 
             try
             {
-                stopwatch.Start();
+                
                 actionToTime();
             }
             finally
             {
-                stopwatch.Stop();
-                if (RandomGenerator.ShouldSend(sampleRate))
-                {
-                    Send<Timing>(statName, stopwatch.ElapsedMilliseconds());
-                }
+				Send<Timing>(statName, stopwatch());
             }
         }
     }

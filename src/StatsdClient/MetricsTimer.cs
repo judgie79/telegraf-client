@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace StatsdClient
 {
@@ -23,7 +24,7 @@ namespace StatsdClient
             {
                 _disposed = true;
                 _stopWatch.Stop();
-                Metrics.Timer(_name, _stopWatch.ElapsedMilliseconds(), _sampleRate);
+                Metrics.Timer(_name, (int)_stopWatch.ElapsedMilliseconds, _sampleRate);
             }
         }
     }
