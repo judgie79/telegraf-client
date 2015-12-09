@@ -89,42 +89,7 @@ namespace StatsdClient
         {
             _statsD.SendInteger(IntegralMetric.Timer, BuildNamespacedStatName(statName), value, sampleRate);
         }
-
-        /// <summary>
-        /// Time a given piece of code (with a using block) and send the elapsed miliseconds
-        /// </summary>
-        /// <param name="name">Name of the metric.</param>
-        /// <returns>A disposable object that will record & send the metric.</returns>
-        /// <param name="sampleRate">Sample rate to reduce the load on your metric server. Defaults to 1 (100%).</param>
-        public static IDisposable StartTimer(string name, double sampleRate = 1)
-        {
-            return new MetricsTimer(name, sampleRate);
-        }
-
-        /// <summary>
-        /// Time a given piece of code (with a lambda) and send the elapsed miliseconds.
-        /// </summary>
-        /// <param name="action">The code to time.</param>
-        /// <param name="statName">Name of the metric.</param>
-        /// <param name="sampleRate">Sample rate to reduce the load on your metric server. Defaults to 1 (100%).</param>
-        public static void Time(Action action, string statName, int sampleRate = 1)
-        {
-            _statsD.Send(action, BuildNamespacedStatName(statName), sampleRate);
-        }
-
-        /// <summary>
-        /// Time a given piece of code (with a lambda) and send the elapsed miliseconds.
-        /// </summary>
-        /// <param name="func">The code to time.</param>
-        /// <param name="statName">Name of the metric.</param>
-        /// <returns>Return value of the function.</returns>
-        public static T Time<T>(Func<T> func, string statName)
-        {
-            using (StartTimer(statName))
-            {
-                return func();
-            }
-        }
+      
 
         /// <summary>
         /// Store a unique occurence of an event between flushes.

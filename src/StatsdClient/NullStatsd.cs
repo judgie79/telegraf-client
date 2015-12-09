@@ -33,16 +33,6 @@ namespace StatsdClient
         {
         }
 
-        public void Add(Action actionToTime, string statName, double sampleRate = 1)
-        {
-            actionToTime();
-        }
-
-        public void Send(Action actionToTime, string statName, double sampleRate = 1)
-        {
-            actionToTime();
-        }
-
         public void SendGauge(string name, double value, bool isDeltaValue)
         {
         }

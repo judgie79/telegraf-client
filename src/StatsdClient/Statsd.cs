@@ -184,46 +184,5 @@ namespace StatsdClient
             var format = sampleRate.Equals(1) ? "{0}:{1}|{2}" : "{0}:{1}|{2}|@{3}";
             return string.Format(CultureInfo.InvariantCulture, format, _prefix + name, value, unit, sampleRate);
         }
-
-        public void Add(Action actionToTime, string statName, double sampleRate=1)
-        {
-			if (!SamplerFunc(sampleRate))
-			{
-				actionToTime();
-				return;
-			}
-            var stopwatch = StopwatchFactory();
-
-            try
-            {
-                actionToTime();
-            }
-            finally
-            {
-				
-				Add<Timing>(statName, stopwatch());
-                
-            }
-        }
-
-        public void Send(Action actionToTime, string statName, double sampleRate=1)
-        {
-			if (!SamplerFunc(sampleRate))
-			{
-				actionToTime();
-				return;
-			}
-            var stopwatch = StopwatchFactory();
-
-            try
-            {
-                
-                actionToTime();
-            }
-            finally
-            {
-				Send<Timing>(statName, stopwatch());
-            }
-        }
     }
 }
