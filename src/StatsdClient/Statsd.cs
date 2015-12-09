@@ -5,10 +5,7 @@ using System.Globalization;
 
 namespace StatsdClient
 {
-    public interface IAllowsSampleRate { }
-    public interface IAllowsInteger { }
-
-	public enum IntegralMetric
+    public enum IntegralMetric
 	{
 		Counter,Timer, // can be sampled
 		Histogram, Meter
@@ -26,21 +23,6 @@ namespace StatsdClient
         private readonly string _prefix;
 
         public List<string> Commands { get; private set; }
-
-        public class Counting : IAllowsSampleRate, IAllowsInteger { }
-        public class Timing : IAllowsSampleRate, IAllowsInteger { }
-        
-        public class Histogram : IAllowsInteger { }
-        public class Meter : IAllowsInteger { }
-
-        private readonly Dictionary<Type, string> _commandToUnit = new Dictionary<Type, string>
-                                                                       {
-                                                                           {typeof (Counting), "c"},
-                                                                           {typeof (Timing), "ms"},
-                                                                           
-                                                                           {typeof (Histogram), "h"},
-                                                                           {typeof (Meter), "m"}
-                                                                       };
 
 		static string MetricToUnit(IntegralMetric m)
 		{
@@ -94,15 +76,7 @@ namespace StatsdClient
         public Statsd(IStatsdUDP udp)
             : this(udp, "") { }
 
-
-        public void Send<TCommandType>(string name, int value) where TCommandType : IAllowsInteger
-        {
-            Commands = new List<string> { GetCommand(name, value.ToString(CultureInfo.InvariantCulture), _commandToUnit[typeof(TCommandType)], 1) };
-            Send();
-        }
-        
-
-        public void SendGauge(string name, double value, bool isDeltaValue) 
+		public void SendGauge(string name, double value, bool isDeltaValue) 
         {
           if (isDeltaValue)
           {
@@ -131,17 +105,12 @@ namespace StatsdClient
             Send();
         }
 
-        public void Add<TCommandType>(string name, int value) where TCommandType : IAllowsInteger
-        {
-            ThreadSafeAddCommand(GetCommand(name, value.ToString(CultureInfo.InvariantCulture), _commandToUnit[typeof (TCommandType)], 1));
-        }
-
         public void AddGauge(string name, double value) 
         {
             ThreadSafeAddCommand(GetCommand(name, String.Format(CultureInfo.InvariantCulture,"{0:F15}", value), "g", 1));
         }
 
-        public void SendInteger(IntegralMetric metric, string name, int value, double sampleRate)
+        public void SendInteger(IntegralMetric metric, string name, int value, double sampleRate = 1)
         {
             if (SamplerFunc(sampleRate))
             {

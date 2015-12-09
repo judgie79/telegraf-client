@@ -100,7 +100,7 @@ namespace Tests
             // This message will be one byte longer than the theoretical limit of a UDP packet
             var msg = new String('f', 65508);
             listenThread.Start();
-            statsd.Add<Statsd.Counting>(msg, 1);
+            statsd.AddInteger(IntegralMetric.Counter, msg, 1);
             statsd.Send();
             // It shouldn't be split or sent, and no exceptions should be raised.
             AssertWasReceived(null);
@@ -111,8 +111,8 @@ namespace Tests
         {
             var msg = new String('f', MetricsConfig.DefaultStatsdMaxUDPPacketSize - 15);
             listenThread.Start(3); // Listen for 3 messages
-            statsd.Add<Statsd.Counting>(msg, 1);
-            statsd.Add<Statsd.Timing>(msg, 2);
+            statsd.AddInteger(IntegralMetric.Counter, msg, 1);
+            statsd.AddInteger(IntegralMetric.Timer, msg, 2);
             statsd.Send();
             // These two metrics should be split as their combined lengths exceed the maximum packet size
             AssertWasReceived(String.Format("{0}:1|c", msg), 0);
@@ -126,9 +126,9 @@ namespace Tests
         {
             var msg = new String('f', MetricsConfig.DefaultStatsdMaxUDPPacketSize / 2);
             listenThread.Start(3);
-            statsd.Add<Statsd.Counting>("counter", 1);
-            statsd.Add<Statsd.Counting>(msg, 2);
-            statsd.Add<Statsd.Counting>(msg, 3);
+            statsd.AddInteger(IntegralMetric.Counter, "counter", 1);
+			statsd.AddInteger(IntegralMetric.Counter, msg, 2);
+			statsd.AddInteger(IntegralMetric.Counter, msg, 3);
             statsd.Send();
             // Make sure that a split packet can contain mulitple metrics
             AssertWasReceived(String.Format("counter:1|c\n{0}:2|c", msg), 0);
@@ -144,8 +144,8 @@ namespace Tests
             statsd = new Statsd(udp);
             var msg = new String('f', 5);
             listenThread.Start(2);
-            statsd.Add<Statsd.Counting>(msg, 1);
-            statsd.Add<Statsd.Timing>(msg, 2);
+			statsd.AddInteger(IntegralMetric.Counter, msg, 1);
+			statsd.AddInteger(IntegralMetric.Timer, msg, 2);
             statsd.Send();
             // Since our packet size limit is now 10, this (short) message should still be split
             AssertWasReceived(String.Format("{0}:1|c", msg), 0);

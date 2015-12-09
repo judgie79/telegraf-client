@@ -44,7 +44,7 @@ namespace Tests
             public void increases_counter_with_value_of_X()
             {
                 var s = new Statsd(_udp, SampleEverything);
-                s.Send<Statsd.Counting>("counter", 5);
+                s.SendInteger(IntegralMetric.Counter, "counter", 5);
                 _udp.AssertWasCalled(x => x.Send("counter:5|c"));
             }
 
@@ -61,7 +61,7 @@ namespace Tests
             {
 				var s = new Statsd(_udp, SampleEverything);
                 _udp.Stub(x => x.Send(Arg<string>.Is.Anything)).Throw(new Exception());
-                s.Send<Statsd.Counting>("counter", 5);
+				s.SendInteger(IntegralMetric.Counter, "counter", 5);
                 Assert.Pass();
             }
         }
@@ -72,7 +72,7 @@ namespace Tests
             public void adds_timing()
             {
 				var s = new Statsd(_udp, SampleEverything);
-                s.Send<Statsd.Timing>("timer", 5);
+                s.SendInteger(IntegralMetric.Timer, "timer", 5);
                 _udp.AssertWasCalled(x => x.Send("timer:5|ms"));
             }
 
@@ -89,7 +89,7 @@ namespace Tests
             {
                 _udp.Stub(x => x.Send(Arg<string>.Is.Anything)).Throw(new Exception());
                 var s = new Statsd(_udp);
-                s.Send<Statsd.Timing>("timer", 5);
+                s.SendInteger(IntegralMetric.Timer, "timer", 5);
                 Assert.Pass();
             }
         }
@@ -132,7 +132,7 @@ namespace Tests
             public void adds_meter()
             {
                 var s = new Statsd(_udp, SampleEverything);
-                s.Send<Statsd.Meter>("meter", 5);
+                s.SendInteger(IntegralMetric.Meter, "meter", 5);
                 _udp.AssertWasCalled(x => x.Send("meter:5|m"));
             }
 
@@ -141,7 +141,7 @@ namespace Tests
             {
                 _udp.Stub(x => x.Send(Arg<string>.Is.Anything)).Throw(new Exception());
                 var s = new Statsd(_udp);
-                s.Send<Statsd.Meter>("meter", 5);
+                s.SendInteger(IntegralMetric.Meter, "meter", 5);
                 Assert.Pass();
             }
         }
@@ -152,7 +152,7 @@ namespace Tests
             public void adds_histogram()
             {
                 var s = new Statsd(_udp, SampleEverything);
-                s.Send<Statsd.Histogram>("histogram", 5);
+                s.SendInteger(IntegralMetric.Histogram, "histogram", 5);
                 _udp.AssertWasCalled(x => x.Send("histogram:5|h"));
             }
 
@@ -161,7 +161,7 @@ namespace Tests
             {
                 _udp.Stub(x => x.Send(Arg<string>.Is.Anything)).Throw(new Exception());
                 var s = new Statsd(_udp);
-                s.Send<Statsd.Histogram>("histogram", 5);
+				s.SendInteger(IntegralMetric.Histogram, "histogram", 5);
                 Assert.Pass();
             }
         }
@@ -204,8 +204,8 @@ namespace Tests
             public void add_one_counter_and_one_gauge_with_no_sample_rate_shows_in_commands()
             {
 				var s = new Statsd(_udp, SampleEverything);
-                s.Add<Statsd.Counting>("counter", 1);
-                s.Add<Statsd.Timing>("timer", 1);
+                s.AddInteger(IntegralMetric.Counter, "counter", 1);
+                s.AddInteger(IntegralMetric.Timer, "timer", 1);
 
                 Assert.That(s.Commands.Count, Is.EqualTo(2));
                 Assert.That(s.Commands[0], Is.EqualTo("counter:1|c"));
@@ -238,8 +238,8 @@ namespace Tests
             public void add_one_counter_and_send_one_timer_sends_only_sends_the_last()
             {
 				var s = new Statsd(_udp, SampleEverything);
-                s.Add<Statsd.Counting>("counter", 1);
-                s.Send<Statsd.Timing>("timer", 1);
+                s.AddInteger(IntegralMetric.Counter, "counter", 1);
+                s.SendInteger(IntegralMetric.Timer, "timer", 1);
 
                 _udp.AssertWasCalled(x => x.Send("timer:1|ms"));
             }
@@ -251,8 +251,8 @@ namespace Tests
             public void set_prefix_on_stats_name_when_calling_send()
             {
                 var s = new Statsd(_udp, "a.prefix.");
-                s.Send<Statsd.Counting>("counter", 5);
-                s.Send<Statsd.Counting>("counter", 5);
+                s.SendInteger(IntegralMetric.Counter, "counter", 5);
+                s.SendInteger(IntegralMetric.Counter, "counter", 5);
 
                 _udp.AssertWasCalled(x => x.Send("a.prefix.counter:5|c"), x => x.Repeat.Twice());
             }
@@ -277,7 +277,7 @@ namespace Tests
             {
 				var s = new Statsd(_udp, SampleEverything);
 
-                Parallel.For(0, 1000000, x => Assert.DoesNotThrow(() => s.Add<Statsd.Counting>("name", 5)));
+                Parallel.For(0, 1000000, x => Assert.DoesNotThrow(() => s.AddInteger(IntegralMetric.Counter,  "name", 5)));
             }
 
             [Test]
