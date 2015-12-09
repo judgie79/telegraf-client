@@ -6,9 +6,9 @@ using System.Globalization;
 namespace StatsdClient
 {
     public interface IAllowsSampleRate { }
-    public interface IAllowsDelta { }
+    
 
-    public interface IAllowsDouble { }
+    
     public interface IAllowsInteger { }
     public interface IAllowsString { }
 
@@ -26,7 +26,7 @@ namespace StatsdClient
 
         public class Counting : IAllowsSampleRate, IAllowsInteger { }
         public class Timing : IAllowsSampleRate, IAllowsInteger { }
-        public class Gauge : IAllowsDouble, IAllowsDelta { }
+        
         public class Histogram : IAllowsInteger { }
         public class Meter : IAllowsInteger { }
         public class Set : IAllowsString { }
@@ -35,7 +35,7 @@ namespace StatsdClient
                                                                        {
                                                                            {typeof (Counting), "c"},
                                                                            {typeof (Timing), "ms"},
-                                                                           {typeof (Gauge), "g"},
+                                                                           
                                                                            {typeof (Histogram), "h"},
                                                                            {typeof (Meter), "m"},
                                                                            {typeof (Set), "s"}
@@ -79,13 +79,13 @@ namespace StatsdClient
             Commands = new List<string> { GetCommand(name, value.ToString(CultureInfo.InvariantCulture), _commandToUnit[typeof(TCommandType)], 1) };
             Send();
         }
-        public void Send<TCommandType>(string name, double value) where TCommandType : IAllowsDouble
+        public void SendGauge(string name, double value) 
         {
-            Commands = new List<string> { GetCommand(name, String.Format(CultureInfo.InvariantCulture,"{0:F15}", value), _commandToUnit[typeof(TCommandType)], 1) };
+            Commands = new List<string> { GetCommand(name, String.Format(CultureInfo.InvariantCulture,"{0:F15}", value), "g", 1) };
             Send();
         }
 
-        public void Send<TCommandType>(string name, double value, bool isDeltaValue) where TCommandType : IAllowsDouble, IAllowsDelta
+        public void SendGauge(string name, double value, bool isDeltaValue) 
         {
           if (isDeltaValue)
           {
@@ -97,13 +97,13 @@ namespace StatsdClient
                 GetCommand(name, string.Format(CultureInfo.InvariantCulture, 
                 deltaValueStringFormat, 
                 value), 
-                  _commandToUnit[typeof(TCommandType)], 1)
+                 "g", 1)
               };
               Send();
           }
           else
           {
-              Send<TCommandType>(name, value);
+              SendGauge(name, value);
           }
         }
 
@@ -118,9 +118,9 @@ namespace StatsdClient
             ThreadSafeAddCommand(GetCommand(name, value.ToString(CultureInfo.InvariantCulture), _commandToUnit[typeof (TCommandType)], 1));
         }
 
-        public void Add<TCommandType>(string name, double value) where TCommandType : IAllowsDouble
+        public void AddGauge(string name, double value) 
         {
-            ThreadSafeAddCommand(GetCommand(name, String.Format(CultureInfo.InvariantCulture,"{0:F15}", value), _commandToUnit[typeof(TCommandType)], 1));
+            ThreadSafeAddCommand(GetCommand(name, String.Format(CultureInfo.InvariantCulture,"{0:F15}", value), "g", 1));
         }
 
         public void Send<TCommandType>(string name, int value, double sampleRate) where TCommandType : IAllowsInteger, IAllowsSampleRate

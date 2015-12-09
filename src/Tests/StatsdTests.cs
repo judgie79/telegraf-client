@@ -212,7 +212,7 @@ namespace Tests
             public void adds_gauge_with_large_double_values()
             {
                 var s = new Statsd(_udp, SampleEverything);
-                s.Send<Statsd.Gauge>("gauge", 34563478564785);
+                s.SendGauge("gauge", 34563478564785);
                 _udp.AssertWasCalled(x => x.Send("gauge:34563478564785.000000000000000|g"));
             }
 
@@ -221,7 +221,7 @@ namespace Tests
             {
                 _udp.Stub(x => x.Send(Arg<string>.Is.Anything)).Throw(new Exception());
                 var s = new Statsd(_udp);
-                s.Send<Statsd.Gauge>("gauge", 5.0);
+                s.SendGauge("gauge", 5.0);
                 Assert.Pass();
             }
 
@@ -233,7 +233,7 @@ namespace Tests
             public void adds_gauge_with_deltaValue_formatsCorrectly(bool isDeltaValue, double value, string expectedFormattedStatsdMessage)
             {
                 var s = new Statsd(_udp, SampleEverything);
-                s.Send<Statsd.Gauge>("delta-gauge", value, isDeltaValue);
+                s.SendGauge("delta-gauge", value, isDeltaValue);
                 _udp.AssertWasCalled(x => x.Send(expectedFormattedStatsdMessage));
             }
         }
@@ -397,7 +397,7 @@ namespace Tests
             {
 				var s = new Statsd(_udp, SampleEverything);
 
-                Parallel.For(0, 1000000, x => Assert.DoesNotThrow(() => s.Add<Statsd.Gauge>("name", 5d)));
+                Parallel.For(0, 1000000, x => Assert.DoesNotThrow(() => s.AddGauge("name", 5d)));
             }
         }
 

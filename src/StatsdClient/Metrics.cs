@@ -58,7 +58,7 @@ namespace StatsdClient
         /// <param name="deltaValue"></param>
         public static void GaugeDelta(string statName, double deltaValue)
         {
-            _statsD.Send<Statsd.Gauge>(BuildNamespacedStatName(statName), deltaValue, true);
+            _statsD.SendGauge(BuildNamespacedStatName(statName), deltaValue, true);
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace StatsdClient
         /// <param name="absoluteValue">Absolute value of the gauge to set.</param>
         public static void GaugeAbsoluteValue(string statName, double absoluteValue)
         {
-            _statsD.Send<Statsd.Gauge>(BuildNamespacedStatName(statName), absoluteValue, false);
+            _statsD.SendGauge(BuildNamespacedStatName(statName), absoluteValue, false);
         }
 
         [Obsolete("Will be removed in future version. Use explicit GaugeDelta or GaugeAbsoluteValue instead.")]

@@ -20,11 +20,11 @@ namespace StatsdClient
         {
         }
 
-        public void Send<TCommandType>(string name, double value) where TCommandType : IAllowsDouble
+        public void SendGauge(string name, double value) 
         {
         }
 
-        public void Add<TCommandType>(string name, double value) where TCommandType : IAllowsDouble
+        public void AddGauge(string name, double value)
         {
         }
 
@@ -56,7 +56,7 @@ namespace StatsdClient
             actionToTime();
         }
 
-        public void Send<TCommandType>(string name, double value, bool isDeltaValue) where TCommandType : IAllowsDouble, IAllowsDelta
+        public void SendGauge(string name, double value, bool isDeltaValue)
         {
         }
   }

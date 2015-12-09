@@ -10,9 +10,9 @@ namespace StatsdClient
         void Send<TCommandType>(string name, int value) where TCommandType : IAllowsInteger;
         void Add<TCommandType>(string name, int value) where TCommandType : IAllowsInteger;
 
-        void Send<TCommandType>(string name, double value) where TCommandType : IAllowsDouble;
-        void Add<TCommandType>(string name, double value) where TCommandType : IAllowsDouble;
-        void Send<TCommandType>(string name, double value, bool isDeltaValue) where TCommandType : IAllowsDouble, IAllowsDelta;
+        void SendGauge(string name, double value);
+        void AddGauge(string name, double value);
+		void SendGauge(string name, double value, bool isDeltaValue);
 
         void Send<TCommandType>(string name, int value, double sampleRate) where TCommandType : IAllowsInteger, IAllowsSampleRate;
         void Add<TCommandType>(string name, int value, double sampleRate) where TCommandType : IAllowsInteger, IAllowsSampleRate;
