@@ -284,7 +284,7 @@ namespace Tests
             public void adds_set_with_string_value()
             {
                 var s = new Statsd(_udp, SampleEverything);
-                s.Send<Statsd.Set>("set", "34563478564785xyz");
+                s.SendSet("set", "34563478564785xyz");
                 _udp.AssertWasCalled(x => x.Send("set:34563478564785xyz|s"));
             }
 
@@ -293,7 +293,7 @@ namespace Tests
             {
                 _udp.Stub(x => x.Send(Arg<string>.Is.Anything)).Throw(new Exception());
                 var s = new Statsd(_udp);
-                s.Send<Statsd.Set>("set", "silent-exception-test");
+                s.SendSet("set", "silent-exception-test");
                 Assert.Pass();
             }
         }

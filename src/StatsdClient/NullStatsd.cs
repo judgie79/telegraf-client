@@ -38,7 +38,7 @@ namespace StatsdClient
         {
         }
 
-        public void Send<TCommandType>(string name, string value) where TCommandType : IAllowsString
+        public void SendSet(string name, string value) 
         {
         }
 

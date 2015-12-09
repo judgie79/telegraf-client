@@ -107,9 +107,9 @@ namespace StatsdClient
           }
         }
 
-        public void Send<TCommandType>(string name, string value) where TCommandType : IAllowsString
+        public void SendSet(string name, string value) 
         {
-            Commands = new List<string> { GetCommand(name, value.ToString(CultureInfo.InvariantCulture), _commandToUnit[typeof(TCommandType)], 1) };
+            Commands = new List<string> { GetCommand(name, value.ToString(CultureInfo.InvariantCulture), "s", 1) };
             Send();
         }
 

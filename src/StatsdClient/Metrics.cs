@@ -131,7 +131,7 @@ namespace StatsdClient
         /// <param name="value">Value to set.</param>
         public static void Set(string statName, string value)
         {
-            _statsD.Send<Statsd.Set>(BuildNamespacedStatName(statName), value);
+            _statsD.SendSet(BuildNamespacedStatName(statName), value);
         }
 
         private static string BuildNamespacedStatName(string statName)
