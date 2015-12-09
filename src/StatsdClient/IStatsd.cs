@@ -7,15 +7,11 @@ namespace StatsdClient
     {
         List<string> Commands { get; }
         
-        void Send<TCommandType>(string name, int value) where TCommandType : IAllowsInteger;
-        void Add<TCommandType>(string name, int value) where TCommandType : IAllowsInteger;
-
-        
         void AddGauge(string name, double value);
 		void SendGauge(string name, double value, bool isDeltaValue);
 
-        void Send<TCommandType>(string name, int value, double sampleRate) where TCommandType : IAllowsInteger, IAllowsSampleRate;
-        void Add<TCommandType>(string name, int value, double sampleRate) where TCommandType : IAllowsInteger, IAllowsSampleRate;
+	    void SendInteger(IntegralMetric type, string name, int value, double sampleRate);
+	    void AddInteger(IntegralMetric type, string name, int value, double sampleRate); 
 
         void SendSet(string name, string value) ;
 

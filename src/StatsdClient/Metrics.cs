@@ -40,16 +40,7 @@ namespace StatsdClient
             }
         }
 
-        /// <summary>
-        /// Send a counter value.
-        /// </summary>
-        /// <param name="statName">Name of the metric.</param>
-        /// <param name="value">Value of the counter. Defaults to 1.</param>
-        /// <param name="sampleRate">Sample rate to reduce the load on your metric server. Defaults to 1 (100%).</param>
-        public static void Counter(string statName, int value = 1, double sampleRate = 1)
-        {
-            _statsD.Send<Statsd.Counting>(BuildNamespacedStatName(statName), value, sampleRate);
-        }
+        
 
         /// <summary>
         /// Modify the current value of the gauge with the given value.
@@ -77,6 +68,17 @@ namespace StatsdClient
             GaugeAbsoluteValue(statName, value);
         }
 
+		/// <summary>
+		/// Send a counter value.
+		/// </summary>
+		/// <param name="statName">Name of the metric.</param>
+		/// <param name="value">Value of the counter. Defaults to 1.</param>
+		/// <param name="sampleRate">Sample rate to reduce the load on your metric server. Defaults to 1 (100%).</param>
+		public static void Counter(string statName, int value = 1, double sampleRate = 1)
+		{
+			_statsD.SendInteger(IntegralMetric.Counter, BuildNamespacedStatName(statName), value, sampleRate);
+		}
+
         /// <summary>
         /// Send a manually timed value.
         /// </summary>
@@ -85,7 +87,7 @@ namespace StatsdClient
         /// <param name="sampleRate">Sample rate to reduce the load on your metric server. Defaults to 1 (100%).</param>
         public static void Timer(string statName, int value, double sampleRate = 1)
         {
-            _statsD.Send<Statsd.Timing>(BuildNamespacedStatName(statName), value, sampleRate);
+            _statsD.SendInteger(IntegralMetric.Timer, BuildNamespacedStatName(statName), value, sampleRate);
         }
 
         /// <summary>

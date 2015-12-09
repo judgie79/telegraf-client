@@ -7,9 +7,15 @@ namespace StatsdClient
 {
     public interface IAllowsSampleRate { }
     public interface IAllowsInteger { }
-    
 
-    public class Statsd : IStatsd
+	public enum IntegralMetric
+	{
+		Counter,Timer, // can be sampled
+		Histogram, Meter
+	}
+
+
+	public class Statsd : IStatsd
     {
         private readonly object _commandCollectionLock = new object();
 
@@ -35,6 +41,26 @@ namespace StatsdClient
                                                                            {typeof (Histogram), "h"},
                                                                            {typeof (Meter), "m"}
                                                                        };
+
+		static string MetricToUnit(IntegralMetric m)
+		{
+			switch (m)
+			{
+				case IntegralMetric.Counter:
+					return "c";
+					
+				case IntegralMetric.Timer:
+					return "ms";
+					
+				case IntegralMetric.Histogram:
+					return "h";
+					
+				case IntegralMetric.Meter:
+					return "m";
+				default:
+					throw new ArgumentOutOfRangeException("m");
+			}
+		}
 
         public Statsd(IStatsdUDP udp, SamplerFunc samplerFunc, StopwatchFactory stopwatchFactory, string prefix)
         {
@@ -115,21 +141,21 @@ namespace StatsdClient
             ThreadSafeAddCommand(GetCommand(name, String.Format(CultureInfo.InvariantCulture,"{0:F15}", value), "g", 1));
         }
 
-        public void Send<TCommandType>(string name, int value, double sampleRate) where TCommandType : IAllowsInteger, IAllowsSampleRate
+        public void SendInteger(IntegralMetric metric, string name, int value, double sampleRate)
         {
             if (SamplerFunc(sampleRate))
             {
-                Commands = new List<string> { GetCommand(name, value.ToString(CultureInfo.InvariantCulture), _commandToUnit[typeof(TCommandType)], sampleRate) };
+                Commands = new List<string> { GetCommand(name, value.ToString(CultureInfo.InvariantCulture),MetricToUnit(metric), sampleRate) };
                 Send();
             }
         }
 
-        public void Add<TCommandType>(string name, int value, double sampleRate) where TCommandType : IAllowsInteger, IAllowsSampleRate
+        public void AddInteger(IntegralMetric metric, string name, int value, double sampleRate = 1)
         {
-            if (SamplerFunc(sampleRate))
-            {
-                Commands.Add(GetCommand(name, value.ToString(CultureInfo.InvariantCulture), _commandToUnit[typeof(TCommandType)], sampleRate));
-            }
+	        if (SamplerFunc(sampleRate))
+	        {
+				Commands.Add(GetCommand(name, value.ToString(CultureInfo.InvariantCulture), MetricToUnit(metric), sampleRate));
+	        }
         }
 
         private void ThreadSafeAddCommand(string command)

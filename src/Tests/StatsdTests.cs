@@ -52,7 +52,7 @@ namespace Tests
             public void increases_counter_with_value_of_X_and_sample_rate()
             {
 				var s = new Statsd(_udp, SampleEverything);
-                s.Send<Statsd.Counting>("counter", 5, 0.1);
+                s.SendInteger(IntegralMetric.Counter, "counter", 5, 0.1);
                 _udp.AssertWasCalled(x => x.Send("counter:5|c|@0.1"));
             }
 
@@ -80,7 +80,7 @@ namespace Tests
             public void timing_with_value_of_X_and_sample_rate()
             {
                 var s = new Statsd(_udp, SampleEverything);
-                s.Send<Statsd.Timing>("timer", 5, 0.1);
+                s.SendInteger(IntegralMetric.Timer, "timer", 5, 0.1);
                 _udp.AssertWasCalled(x => x.Send("timer:5|ms|@0.1"));
             }
 
@@ -304,8 +304,8 @@ namespace Tests
             public void add_one_counter_and_one_gauge_shows_in_commands()
             {
 				var s = new Statsd(_udp, SampleEverything);
-                s.Add<Statsd.Counting>("counter", 1, 0.1);
-                s.Add<Statsd.Timing>("timer", 1);
+                s.AddInteger(IntegralMetric.Counter, "counter", 1, 0.1);
+                s.AddInteger(IntegralMetric.Timer, "timer", 1);
 
                 Assert.That(s.Commands.Count, Is.EqualTo(2));
                 Assert.That(s.Commands[0], Is.EqualTo("counter:1|c|@0.1"));
@@ -328,8 +328,8 @@ namespace Tests
             public void add_one_counter_and_one_timer_sends_in_one_go()
             {
 				var s = new Statsd(_udp, SampleEverything);
-                s.Add<Statsd.Counting>("counter", 1, 0.1);
-                s.Add<Statsd.Timing>("timer", 1);
+                s.AddInteger(IntegralMetric.Counter, "counter", 1, 0.1);
+                s.AddInteger(IntegralMetric.Timer, "timer", 1);
                 s.Send();
 
                 _udp.AssertWasCalled(x => x.Send("counter:1|c|@0.1\ntimer:1|ms"));
@@ -339,8 +339,8 @@ namespace Tests
             public void add_one_counter_and_one_timer_sends_and_removes_commands()
             {
 				var s = new Statsd(_udp, SampleEverything);
-                s.Add<Statsd.Counting>("counter", 1, 0.1);
-                s.Add<Statsd.Timing>("timer", 1);
+                s.AddInteger(IntegralMetric.Counter, "counter", 1, 0.1);
+                s.AddInteger(IntegralMetric.Timer, "timer", 1);
                 s.Send();
 
                 Assert.That(s.Commands.Count, Is.EqualTo(0));
@@ -374,8 +374,8 @@ namespace Tests
             {
 				var s = new Statsd(_udp, SampleEverything, MeasureHalfASecond, "another.prefix.");
 
-                s.Add<Statsd.Counting>("counter", 1, 0.1);
-                s.Add<Statsd.Timing>("timer", 1);
+                s.AddInteger(IntegralMetric.Counter, "counter", 1, 0.1);
+                s.AddInteger(IntegralMetric.Timer, "timer", 1);
                 s.Send();
 
                 _udp.AssertWasCalled(x => x.Send("another.prefix.counter:1|c|@0.1\nanother.prefix.timer:1|ms"));
