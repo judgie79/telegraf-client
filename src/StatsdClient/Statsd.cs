@@ -6,11 +6,8 @@ using System.Globalization;
 namespace StatsdClient
 {
     public interface IAllowsSampleRate { }
-    
-
-    
     public interface IAllowsInteger { }
-    public interface IAllowsString { }
+    
 
     public class Statsd : IStatsd
     {
@@ -29,7 +26,6 @@ namespace StatsdClient
         
         public class Histogram : IAllowsInteger { }
         public class Meter : IAllowsInteger { }
-        public class Set : IAllowsString { }
 
         private readonly Dictionary<Type, string> _commandToUnit = new Dictionary<Type, string>
                                                                        {
@@ -37,8 +33,7 @@ namespace StatsdClient
                                                                            {typeof (Timing), "ms"},
                                                                            
                                                                            {typeof (Histogram), "h"},
-                                                                           {typeof (Meter), "m"},
-                                                                           {typeof (Set), "s"}
+                                                                           {typeof (Meter), "m"}
                                                                        };
 
         public Statsd(IStatsdUDP udp, SamplerFunc samplerFunc, StopwatchFactory stopwatchFactory, string prefix)
