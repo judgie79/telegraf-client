@@ -20,10 +20,6 @@ namespace StatsdClient
         {
         }
 
-        public void SendGauge(string name, double value) 
-        {
-        }
-
         public void AddGauge(string name, double value)
         {
         }

@@ -212,7 +212,7 @@ namespace Tests
             public void adds_gauge_with_large_double_values()
             {
                 var s = new Statsd(_udp, SampleEverything);
-                s.SendGauge("gauge", 34563478564785);
+                s.SendGauge("gauge", 34563478564785, false);
                 _udp.AssertWasCalled(x => x.Send("gauge:34563478564785.000000000000000|g"));
             }
 
@@ -221,7 +221,7 @@ namespace Tests
             {
                 _udp.Stub(x => x.Send(Arg<string>.Is.Anything)).Throw(new Exception());
                 var s = new Statsd(_udp);
-                s.SendGauge("gauge", 5.0);
+                s.SendGauge("gauge", 5.0, false);
                 Assert.Pass();
             }
 

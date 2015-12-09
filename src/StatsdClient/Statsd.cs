@@ -74,11 +74,7 @@ namespace StatsdClient
             Commands = new List<string> { GetCommand(name, value.ToString(CultureInfo.InvariantCulture), _commandToUnit[typeof(TCommandType)], 1) };
             Send();
         }
-        public void SendGauge(string name, double value) 
-        {
-            Commands = new List<string> { GetCommand(name, String.Format(CultureInfo.InvariantCulture,"{0:F15}", value), "g", 1) };
-            Send();
-        }
+        
 
         public void SendGauge(string name, double value, bool isDeltaValue) 
         {
@@ -98,7 +94,8 @@ namespace StatsdClient
           }
           else
           {
-              SendGauge(name, value);
+			  Commands = new List<string> { GetCommand(name, String.Format(CultureInfo.InvariantCulture, "{0:F15}", value), "g", 1) };
+			  Send();
           }
         }
 
