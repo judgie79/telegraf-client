@@ -1,45 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace StatsdClient
-{
-    public class NullStatsd : IStatsd
-    {
-        public NullStatsd()
-        {
-            Commands = new List<string>();
-        }
+namespace Telegraf {
 
-        public List<string> Commands { get; private set; }
+	public class NullStatsd : IStatsd {
+		public NullStatsd() {
+			Commands = new List<string>();
+		}
 
-     
+		public List<string> Commands { get; private set; }
 
-        public void AddGauge(string name, double value)
-        {
-        }
 
-      
+		public void AddGauge(string name, double value) {}
 
-	    public void AddInteger(IntegralMetric type, string name, int value, double sampleRate)
-	    {
-		    
-	    }
 
-	    public void SendSet(string name, string value) 
-        {
-        }
+		public void AddInteger(IntegralMetric type, string name, int value, double sampleRate) {}
 
-        public void Send()
-        {
-        }
+		public void SendSet(string name, string value) {}
 
-        public void SendGauge(string name, double value, bool isDeltaValue)
-        {
-        }
+		public void Send() {}
 
-	    public void SendInteger(IntegralMetric type, string name, int value, double sampleRate)
-	    {
-		    
-	    }
-    }
+		public void SendGauge(string name, double value, bool isDeltaValue) {}
+
+		public void SendInteger(IntegralMetric type, string name, int value, double sampleRate) {}
+	}
+
 }
