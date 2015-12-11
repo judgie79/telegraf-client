@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+    <metadata>
+        <id>Telegraf</id>
+        <version>1.0.0</version>
+        <authors>AgileHarbor</authors>
+        <owners>AgileHarbor</owners>
+        <licenseUrl>https://github.com/agileharbor/telegraf-client/blob/master/LICENSE.md</licenseUrl>
+        <projectUrl>https://github.com/agileharbor/telegraf-client</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Telegraf client library.</description>
+        <copyright>AgileHarbor</copyright>
+    </metadata>
+    <files>
+        <file src="bin\Telegraf.dll" target="lib\net45\Telegraf.dll" />
+        <file src="bin\Telegraf.pdb" target="lib\net45\Telegraf.pdb" />
+    </files>
+</package>
