@@ -16,9 +16,6 @@ namespace Tests
         private const string _localhostAddress = "127.0.0.1";
         private MetricsConfig _defaultMetricsConfig;
 
-        const string _expectedTestPrefixRegex = @"test_prefix\.";
-        const string _expectedTimeRegEx = @"time:.\\|ms";
-
         [TestFixtureSetUp]
         public void SetUpUdpListener()
         {

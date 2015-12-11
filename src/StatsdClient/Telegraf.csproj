@@ -5,12 +5,12 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C4355D8F-BAB4-4C53-8E10-3ABB571A6F05}</ProjectGuid>
+    <ProjectGuid>{77B1707A-9123-4CD9-9A18-A8D7F4794D71}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tests</RootNamespace>
-    <AssemblyName>Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <RootNamespace>Telegraf</RootNamespace>
+    <AssemblyName>Telegraf</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -32,45 +32,19 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Rhino.Mocks">
-      <HintPath>..\..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="A_MetricsTests.cs" />
-    <Compile Include="IPV4ParsingTests.cs" />
-    <Compile Include="MetricsTests.cs" />
-    <Compile Include="RandomGeneratorUnitTests.cs" />
-    <Compile Include="UDPSmokeTests.cs" />
-    <Compile Include="StatsdTests.cs" />
+    <Compile Include="IStatsd.cs" />
+    <Compile Include="Metrics.cs" />
+    <Compile Include="MetricsConfig.cs" />
+    <Compile Include="NullStatsd.cs" />
+    <Compile Include="RandomGenerator.cs" />
+    <Compile Include="Statsd.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="MetricIntegrationTests.cs" />
-    <Compile Include="UdpListener.cs" />
-    <Compile Include="StatsdUDPTests.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\StatsdClient\StatsdClient.csproj">
-      <Project>{77B1707A-9123-4CD9-9A18-A8D7F4794D71}</Project>
-      <Name>StatsdClient</Name>
-    </ProjectReference>
+    <Compile Include="StatsdUDP.cs" />
+    <Compile Include="StopWatchFactory.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
