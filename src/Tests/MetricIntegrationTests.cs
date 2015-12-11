@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using NUnit.Framework;
 using StatsdClient;
@@ -92,23 +93,23 @@ namespace Tests
             }
 
             [Test]
-            public void counter_with_prefix()
+            public void counter_with_default_tag()
             {
-                _defaultMetricsConfig.Prefix = "test_prefix";
+                _defaultMetricsConfig.Tags = new []{"config_tag=value1"};
                 Metrics.Configure(_defaultMetricsConfig);
 
                 Metrics.Counter("counter");
-                Assert.That(LastPacketMessageReceived(), Is.EqualTo("test_prefix.counter:1|c"));
+				Assert.That(LastPacketMessageReceived(), Is.EqualTo("counter,config_tag=value1:1|c"));
             }
 
             [Test]
-            public void counter_with_prefix_having_a_trailing_dot()
+            public void counter_with_default_tag_and_value()
             {
-                _defaultMetricsConfig.Prefix = "test_prefix.";
+	            _defaultMetricsConfig.Tags = new[] {"config_tag=value1"};
                 Metrics.Configure(_defaultMetricsConfig);
 
-                Metrics.Counter("counter");
-                Assert.That(LastPacketMessageReceived(), Is.EqualTo("test_prefix.counter:1|c"));
+                Metrics.Counter("counter", tags : new[]{"local_tag=value2"});
+                Assert.That(LastPacketMessageReceived(), Is.EqualTo("counter,config_tag=value1,local_tag=value2:1|c"));
             }
 
             [Test]
@@ -142,23 +143,23 @@ namespace Tests
             }
 
             [Test]
-            public void timer_with_prefix()
+            public void timer_with_tag()
             {
-                _defaultMetricsConfig.Prefix = "test_prefix";
+				_defaultMetricsConfig.Tags = new[] { "config_tag=value1" };
                 Metrics.Configure(_defaultMetricsConfig);
 
                 Metrics.Timer("timer", 6);
-                Assert.That(LastPacketMessageReceived(), Is.EqualTo("test_prefix.timer:6|ms"));
+                Assert.That(LastPacketMessageReceived(), Is.EqualTo("timer,config_tag=value1:6|ms"));
             }
 
             [Test]
-            public void timer_with_prefix_having_a_trailing_dot()
+            public void timer_with_config_and_local_tags()
             {
-                _defaultMetricsConfig.Prefix = "test_prefix.";
+				_defaultMetricsConfig.Tags = new[] { "config_tag=value1" };
                 Metrics.Configure(_defaultMetricsConfig);
 
-                Metrics.Timer("timer", 6);
-                Assert.That(LastPacketMessageReceived(), Is.EqualTo("test_prefix.timer:6|ms"));
+                Metrics.Timer("timer", 6, tags : new []{"local_tag=value2"});
+                Assert.That(LastPacketMessageReceived(), Is.EqualTo("timer,config_tag=value1,local_tag=value2:6|ms"));
             }
 
             [Test]
@@ -225,23 +226,23 @@ namespace Tests
             }
 
             [Test]
-            public void absolute_gauge_with_prefix()
+            public void absolute_gauge_with_config_tag()
             {
-                _defaultMetricsConfig.Prefix = "test_prefix";
+				_defaultMetricsConfig.Tags = new[] { "config_tag=value1" };
                 Metrics.Configure(_defaultMetricsConfig);
 
                 Metrics.GaugeAbsoluteValue("gauge", 3);
-                Assert.That(LastPacketMessageReceived(), Is.EqualTo("test_prefix.gauge:3.000000000000000|g"));
+                Assert.That(LastPacketMessageReceived(), Is.EqualTo("gauge,config_tag=value1:3.000000000000000|g"));
             }
 
             [Test]
-            public void absolute_gauge_with_prefix_having_a_trailing_dot()
+            public void absolute_gauge_with_config_and_local_tag()
             {
-                _defaultMetricsConfig.Prefix = "test_prefix.";
+				_defaultMetricsConfig.Tags = new[] { "config_tag=value1" };
                 Metrics.Configure(_defaultMetricsConfig);
 
-                Metrics.GaugeAbsoluteValue("gauge", 3);
-                Assert.That(LastPacketMessageReceived(), Is.EqualTo("test_prefix.gauge:3.000000000000000|g"));
+                Metrics.GaugeAbsoluteValue("gauge", 3, tags:new []{"local_tag=value2"});
+                Assert.That(LastPacketMessageReceived(), Is.EqualTo("gauge,config_tag=value1,local_tag=value2:3.000000000000000|g"));
             }
 
             [Test]
@@ -266,23 +267,23 @@ namespace Tests
             }
 
             [Test]
-            public void set_with_prefix()
+            public void set_with_config_tag()
             {
-                _defaultMetricsConfig.Prefix = "test_prefix";
+				_defaultMetricsConfig.Tags = new[] { "config_tag=value1" };
                 Metrics.Configure(_defaultMetricsConfig);
 
                 Metrics.Set("timer", "value");
-                Assert.That(LastPacketMessageReceived(), Is.EqualTo("test_prefix.timer:value|s"));
+                Assert.That(LastPacketMessageReceived(), Is.EqualTo("timer,config_tag=value1:value|s"));
             }
 
             [Test]
-            public void set_with_prefix_having_a_trailing_dot()
+            public void set_with_config_and_local_tag()
             {
-                _defaultMetricsConfig.Prefix = "test_prefix.";
+				_defaultMetricsConfig.Tags = new[] { "config_tag=value1" };
                 Metrics.Configure(_defaultMetricsConfig);
 
-                Metrics.Set("timer", "value");
-                Assert.That(LastPacketMessageReceived(), Is.EqualTo("test_prefix.timer:value|s"));
+                Metrics.Set("timer", "value", tags:new []{"local_tag=value2"});
+                Assert.That(LastPacketMessageReceived(), Is.EqualTo("timer,config_tag=value1,local_tag=value2:value|s"));
             }
 
             [Test]

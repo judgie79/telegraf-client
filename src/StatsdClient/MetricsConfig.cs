@@ -1,4 +1,6 @@
-﻿namespace StatsdClient
+﻿using System.Collections.Generic;
+
+namespace StatsdClient
 {
     public class MetricsConfig
     {
@@ -21,13 +23,14 @@
         /// Allows you to optionally specify a stat name prefix for all your stats.
         /// Eg setting it to "Production.MyApp", then sending a counter with the name "Value" will result in a final stat name of "Production.MyApp.Value".
         /// </summary>
-        public string Prefix { get; set; }
+        public IList<string> Tags { get; set; }
 
         public const int DefaultStatsdServerPort = 8125;
         public const int DefaultStatsdMaxUDPPacketSize = 512;
 
         public MetricsConfig()
         {
+			Tags = new List<string>();
             StatsdServerPort = DefaultStatsdServerPort;
             StatsdMaxUDPPacketSize = DefaultStatsdMaxUDPPacketSize;
         }

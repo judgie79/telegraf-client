@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Text;
 
 namespace StatsdClient
 {
@@ -6,7 +8,7 @@ namespace StatsdClient
     {
         private static IStatsd _statsD = new NullStatsd();
         private static StatsdUDP _statsdUdp;
-        private static string _prefix;
+        private static string _tags;
 
         /// <summary>
         /// Configures the Metric class with a configuration. Call this once at application startup (Main(), Global.asax, etc).
@@ -19,8 +21,7 @@ namespace StatsdClient
                 throw new ArgumentNullException("config");
             }
 
-            _prefix = config.Prefix ?? "";
-            _prefix = _prefix.TrimEnd('.');
+	        _tags = string.Join(",", config.Tags.ToArray());
             CreateStatsD(config);
         }
 
@@ -57,9 +58,9 @@ namespace StatsdClient
         /// </summary>
         /// <param name="statName">Name of the metric.</param>
         /// <param name="absoluteValue">Absolute value of the gauge to set.</param>
-        public static void GaugeAbsoluteValue(string statName, double absoluteValue)
+        public static void GaugeAbsoluteValue(string statName, double absoluteValue, string[] tags = null)
         {
-            _statsD.SendGauge(BuildNamespacedStatName(statName), absoluteValue, false);
+            _statsD.SendGauge(BuildNamespacedStatName(statName, tags), absoluteValue, false);
         }
 
         [Obsolete("Will be removed in future version. Use explicit GaugeDelta or GaugeAbsoluteValue instead.")]
@@ -74,9 +75,9 @@ namespace StatsdClient
 		/// <param name="statName">Name of the metric.</param>
 		/// <param name="value">Value of the counter. Defaults to 1.</param>
 		/// <param name="sampleRate">Sample rate to reduce the load on your metric server. Defaults to 1 (100%).</param>
-		public static void Counter(string statName, int value = 1, double sampleRate = 1)
+		public static void Counter(string statName, int value = 1, double sampleRate = 1, string[] tags = null)
 		{
-			_statsD.SendInteger(IntegralMetric.Counter, BuildNamespacedStatName(statName), value, sampleRate);
+			_statsD.SendInteger(IntegralMetric.Counter, BuildNamespacedStatName(statName, tags), value, sampleRate);
 		}
 
         /// <summary>
@@ -85,9 +86,9 @@ namespace StatsdClient
         /// <param name="statName">Name of the metric.</param>
         /// <param name="value">Elapsed miliseconds of the event.</param>
         /// <param name="sampleRate">Sample rate to reduce the load on your metric server. Defaults to 1 (100%).</param>
-        public static void Timer(string statName, int value, double sampleRate = 1)
+        public static void Timer(string statName, int value, double sampleRate = 1, string[] tags =null)
         {
-            _statsD.SendInteger(IntegralMetric.Timer, BuildNamespacedStatName(statName), value, sampleRate);
+            _statsD.SendInteger(IntegralMetric.Timer, BuildNamespacedStatName(statName, tags), value, sampleRate);
         }
       
 
@@ -96,19 +97,26 @@ namespace StatsdClient
         /// </summary>
         /// <param name="statName">Name of the metric.</param>
         /// <param name="value">Value to set.</param>
-        public static void Set(string statName, string value)
+        public static void Set(string statName, string value, string[] tags = null)
         {
-            _statsD.SendSet(BuildNamespacedStatName(statName), value);
+            _statsD.SendSet(BuildNamespacedStatName(statName, tags), value);
         }
 
-        private static string BuildNamespacedStatName(string statName)
+        private static string BuildNamespacedStatName(string statName, params string[] tags)
         {
-            if (string.IsNullOrEmpty(_prefix))
-            {
-                return statName;
-            }
-
-            return _prefix + "." + statName;
+	        var builder = new StringBuilder(statName);
+	        if (!string.IsNullOrEmpty(_tags))
+	        {
+		        builder.Append(',').Append(_tags);
+	        }
+	        if (tags != null)
+	        {
+		        for (int i = 0; i < tags.Length; i++)
+		        {
+			        builder.Append(',').Append(tags[i]);
+		        }
+	        }
+	        return builder.ToString();
         }
     }
 }
