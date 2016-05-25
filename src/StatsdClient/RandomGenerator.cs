@@ -3,17 +3,16 @@ using System.Threading;
 
 namespace Telegraf {
 
-	public delegate bool SamplerFunc(double sampleRate);
+	public delegate bool SamplerFunc(int sampleRate);
 
 
 	public class SamplerDefault {
 		static long _counter;
 
-		public static bool ShouldSend(double sampleRate) {
-			if (sampleRate.Equals(1)) {
+		public static bool ShouldSend(int rate) {
+			if (rate == 1) {
 				return true;
 			}
-			var rate = Convert.ToInt32(1/sampleRate);
 			return (Environment.TickCount ^ Interlocked.Increment(ref _counter))%rate == 0;
 		}
 	}

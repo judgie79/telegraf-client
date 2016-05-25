@@ -6,31 +6,38 @@ namespace Telegraf {
 		/// <summary>
 		/// The full host name of your statsd server.
 		/// </summary>
-		public string StatsdServerName { get; set; }
+		public string ServerName { get; set; }
 
 		/// <summary>
 		/// Uses the statsd default port if not specified (8125).
 		/// </summary>
-		public int StatsdServerPort { get; set; }
+		public int ServerPort { get; set; }
 
 		/// <summary>
 		/// Allows you to override the maximum UDP packet size (in bytes) if your setup requires that. Defaults to 512.
 		/// </summary>
-		public int StatsdMaxUDPPacketSize { get; set; }
+		public int MaxUDPPacketSize { get; set; }
 
 		/// <summary>
 		/// Allows you to optionally specify a stat name prefix for all your stats.
-		/// Eg setting it to "Production.MyApp", then sending a counter with the name "Value" will result in a final stat name of "Production.MyApp.Value".
 		/// </summary>
-		public IList<string> Tags { get; set; }
+		public Dictionary<string,string> Tags { get; set; }
 
-		public const int DefaultStatsdServerPort = 8125;
-		public const int DefaultStatsdMaxUDPPacketSize = 512;
+		public const int DefaultCollectorPort = 8099;
+		public const int DefaultMaxUDPPacketSize = 512;
+		public const string DefaultServerName = "127.0.0.1";
+
+
+		public int AsyncMaxNumberOfPointsInQueue { get; set; }
+		public int AsyncPutXMetricsInUDPPacket { get; set; }
 
 		public MetricsConfig() {
-			Tags = new List<string>();
-			StatsdServerPort = DefaultStatsdServerPort;
-			StatsdMaxUDPPacketSize = DefaultStatsdMaxUDPPacketSize;
+			Tags = new Dictionary<string, string>();
+			ServerPort = DefaultCollectorPort;
+			MaxUDPPacketSize = DefaultMaxUDPPacketSize;
+			ServerName = DefaultServerName;
+			AsyncMaxNumberOfPointsInQueue = 10000;
+			AsyncPutXMetricsInUDPPacket = 4;
 		}
 	}
 
