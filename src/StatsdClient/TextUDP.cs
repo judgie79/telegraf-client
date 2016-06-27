@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 
 namespace Telegraf {
 
@@ -12,6 +13,9 @@ namespace Telegraf {
 
 	public class TextUDP : IDisposable, ITextUDP {
 		public IPEndPoint IPEndpoint { get; private set; }
+
+		public Exception LastUdpSocketException { get; private set; }
+		public long UdpSocketExceptionCount;
 
 		readonly int _maxUdpPacketSizeBytes;
 		readonly Socket _udpSocket;
@@ -89,7 +93,13 @@ namespace Telegraf {
 					// be sent without issue.
 				}
 			}
-			_udpSocket.SendTo(encodedCommand, encodedCommand.Length, SocketFlags.None, IPEndpoint);
+			try {
+				_udpSocket.SendTo(encodedCommand, encodedCommand.Length, SocketFlags.None, IPEndpoint);
+			}
+			catch (Exception ex) {
+				Interlocked.Increment(ref UdpSocketExceptionCount);
+				LastUdpSocketException = ex;
+			}
 		}
 
 		//reference : https://lostechies.com/chrispatterson/2012/11/29/idisposable-done-right/
