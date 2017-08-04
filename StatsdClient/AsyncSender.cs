@@ -14,7 +14,7 @@ namespace Telegraf {
 		long _failed;
 		readonly int _maxLevel;
 		readonly int _batchSize;
-		readonly IText _text;
+		readonly ITextUDP _udp;
 
 		public long CountDiscarded() {
 			return _discarded;
@@ -24,10 +24,10 @@ namespace Telegraf {
 			return _failed;
 		}
 
-		public AsyncSender(IText udp, Dictionary<string, string> tags, int maxLevel, int batchSize) {
+		public AsyncSender(ITextUDP udp, Dictionary<string, string> tags, int maxLevel, int batchSize) {
 			_maxLevel = maxLevel;
 			_batchSize = batchSize;
-			_text = udp;
+			_udp = udp;
 			_tags = tags;
 		}
 
@@ -64,7 +64,7 @@ namespace Telegraf {
 							list[i].Format(writer, _tags);
 							
 						}
-						_text.Send(writer.ToString());
+						_udp.Send(writer.ToString());
 					}
 				}
 				catch (Exception ex) {

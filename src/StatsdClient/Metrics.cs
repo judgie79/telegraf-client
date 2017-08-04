@@ -7,7 +7,7 @@ namespace Telegraf {
 
 	public static class Metrics {
 		static ISender _statsD = new NullSender();
-		static TextUDP _textUdp;
+		static IText _text;
 		static readonly SamplerFunc Sampler = SamplerDefault.ShouldSend;
 		static bool _configured;
 
@@ -18,25 +18,19 @@ namespace Telegraf {
 		public static void Configure(MetricsConfig config) {
 			CheckValidity(config);
 
-			_textUdp = new TextUDP(
-				config.ServerName, 
-				config.ServerPort,
-				config.MaxUDPPacketSize);
+            _text = TextTypeFactory.Create(config);
 
-			_statsD = new SyncSender(_textUdp, config.Tags);
+			_statsD = new SyncSender(_text, config.Tags);
 			_configured = true;
 		}
 
 		public static AsyncSender ConfigureAsync(MetricsConfig config) {
 			CheckValidity(config);
 
-			_textUdp = new TextUDP(
-				config.ServerName,
-				config.ServerPort,
-				config.MaxUDPPacketSize);
+            _text = TextTypeFactory.Create(config);
 
-			var asyncSender = new AsyncSender(
-				_textUdp, 
+            var asyncSender = new AsyncSender(
+				_text, 
 				config.Tags, 
 				config.AsyncMaxNumberOfPointsInQueue,
 				config.MaxUDPPacketSize);

@@ -23,7 +23,7 @@ namespace Telegraf {
 		/// </summary>
 		public Dictionary<string,string> Tags { get; set; }
 
-		public const int DefaultCollectorPort = 8099;
+		public const int DefaultCollectorPort = 8094;
 		public const int DefaultMaxUDPPacketSize = 512;
 		public const string DefaultServerName = "127.0.0.1";
 
@@ -31,14 +31,24 @@ namespace Telegraf {
 		public int AsyncMaxNumberOfPointsInQueue { get; set; }
 		public int AsyncPutXMetricsInUDPPacket { get; set; }
 
-		public MetricsConfig() {
+        public TextType TextType { get; set; }
+
+        public MetricsConfig() {
 			Tags = new Dictionary<string, string>();
 			ServerPort = DefaultCollectorPort;
 			MaxUDPPacketSize = DefaultMaxUDPPacketSize;
 			ServerName = DefaultServerName;
 			AsyncMaxNumberOfPointsInQueue = 10000;
 			AsyncPutXMetricsInUDPPacket = 4;
-		}
+            TextType = TextType.Udp;
+
+        }
 	}
+
+    public enum TextType
+    {
+        Http,
+        Udp
+    }
 
 }

@@ -7,13 +7,11 @@ using System.Threading;
 
 namespace Telegraf {
 
-	public interface ITextUDP: IText
-    {
+	public interface ITextUDP {
+		void Send(string command);
+	}
 
-    }
-
-
-    public class TextUDP : IDisposable, ITextUDP {
+	public class TextUDP : IDisposable, ITextUDP {
 		public IPEndPoint IPEndpoint { get; private set; }
 
 		public Exception LastUdpSocketException { get; private set; }
@@ -51,8 +49,8 @@ namespace Telegraf {
 			return ipAddress;
 		}
 
-        IPAddress GetIpFromHostname() {
-			var addressList = Dns.GetHostEntryAsync(_name).Result.AddressList;
+		IPAddress GetIpFromHostname() {
+			var addressList = Dns.GetHostEntry(_name).AddressList;
 			var ipv4Addresses = addressList.Where(x => x.AddressFamily != AddressFamily.InterNetworkV6);
 
 			return ipv4Addresses.First();
@@ -125,7 +123,7 @@ namespace Telegraf {
 			if (disposing) {
 				if (_udpSocket != null) {
 					try {
-                        _udpSocket.Dispose();
+						_udpSocket.Close();
 					}
 					catch (Exception) {
 						//Swallow since we are not using a logger, should we add LibLog and start logging??

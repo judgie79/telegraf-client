@@ -9,18 +9,18 @@ namespace Telegraf {
 
 
 	public class SyncSender : ISender {
-		readonly IText _text;
+		readonly ITextUDP _udp;
 		private readonly Dictionary<string, string> _tags;
 
-		public SyncSender(IText udp, Dictionary<string, string> tags) {
-			_text = udp;
+		public SyncSender(ITextUDP udp, Dictionary<string, string> tags) {
+			_udp = udp;
 			_tags = tags;
 		}
 
 		public void Send(InfluxPoint point) {
 			using (var writer = new StringWriter()) {
 				point.Format(writer, _tags);
-				_text.Send(writer.ToString());
+				_udp.Send(writer.ToString());
 			}
 		}
 	}
