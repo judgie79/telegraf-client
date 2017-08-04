@@ -1,4 +1,11 @@
-Telegraf Client
+Telegraf Client for .Net Core
+
+forked from [Telegraf Client](https://github.com/agileharbor/telegraf-client)
+
+- with additional support of the telegraf http listener instead of udp
+
+
+original readme:
 =============
 A C# client to interface with InfluxDb Telegraph client, forked from the 
 awesome [StatsD client](https://github.com/Pereingo/statsd-csharp-client) by Goncalo Pereira.
