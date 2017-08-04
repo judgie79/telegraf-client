@@ -59,8 +59,8 @@ namespace Telegraf {
 		/// </summary>
 		/// <param name="measurement">Name of the metric.</param>
 		/// <param name="value">Absolute value of the gauge to set.</param>
-		public static void RecordValue(string measurement, object value, 
-			Dictionary<string,string> tags=null, 
+		public static void RecordValue(string measurement, object value,
+            IReadOnlyDictionary<string,string> tags=null, 
 			int sampleRate = 1) {
 			if (!Sampler(sampleRate)) {
 				return;
@@ -70,9 +70,9 @@ namespace Telegraf {
 			_statsD.Send(point);
 		}
 
-		public static void Record(string measurement, 
-			Dictionary<string,object> values,
-			Dictionary<string, string> tags = null,
+		public static void Record(string measurement,
+            IReadOnlyDictionary<string,object> values,
+            IReadOnlyDictionary<string, string> tags = null,
 			int sampleRate = 1)
 		{
 			if (!Sampler(sampleRate))
@@ -89,8 +89,8 @@ namespace Telegraf {
 		/// <param name="value">Value of the counter. Defaults to 1.</param>
 		/// <param name="sampleRate">Sample rate to reduce the load on your metric server. Defaults to 1 (100%).</param>
 		public static void RecordCount(
-			string measurement, long count = 1, 
-			Dictionary<string,string> tags = null,
+			string measurement, long count = 1,
+            IReadOnlyDictionary<string,string> tags = null,
 			int sampleRate = 1) {
 			if (!Sampler(sampleRate))
 			{
